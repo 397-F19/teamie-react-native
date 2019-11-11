@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, AppRegistry } from 'react-native';
+import { StyleSheet, Text, View, AppRegistry, ScrollView } from 'react-native';
 import { Provider as PaperProvider, Appbar } from 'react-native-paper';
 import { Avatar, Button, Card, Title, Paragraph, List, TextInput, Dialog, Portal} from 'react-native-paper';
 
@@ -21,7 +21,7 @@ const App = () => {
   _hideDialog = () => this.setState({ visible: false });
 
   return (
-    <View>
+    <ScrollView>
     <Appbar style={styles.bottom}>
     <Appbar.Content
           title="Teamie"
@@ -111,7 +111,7 @@ const App = () => {
     </Card.Actions>
   </Card>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
