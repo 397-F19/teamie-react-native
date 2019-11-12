@@ -19,15 +19,18 @@ firebase.initializeApp(firebaseConfig);
 
 const db = firebase.database();
 
-
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       expanded: true,
-      text: '',
       visible: false,
-      restaurantDBCopy: []
+      restaurantDBCopy: [],
+      filteredRestaurants: [],
+      vibe: "",
+      numPeople: "",
+      budget: "",
+      selectedTime: ""
     }
     this.handleData = this.handleData.bind(this);
     db.ref().on('value', this.handleData, e => console.log(e));
@@ -41,7 +44,8 @@ class App extends Component {
       })
     }, e => console.log(e));
     this.setState({
-      restaurantDBCopy: restaurantsList
+      restaurantDBCopy: restaurantsList,
+      filteredRestaurants: restaurantsList
     });
     console.log("handleData called");
   }
@@ -63,6 +67,53 @@ class App extends Component {
     visible: false
   });
 
+  matchFilter (r) {
+    let filterStatus = []
+    // Vibe
+    if (this.state.vibe === "" || r.vibes.includes(this.state.vibe)) {
+      filterStatus.push(true);
+    }
+    else {
+      filterStatus.push(false);
+    }
+    // Party Size
+    if (this.state.numPeople === "" || (r.party_size.includes(this.state.numPeople))) {
+      filterStatus.push(true);
+    }
+    else {
+      filterStatus.push(false);
+    }
+    // Budget
+    if (this.state.budget === "" || (parseFloat(r.price) <= parseFloat(this.state.budget))) {
+      filterStatus.push(true);
+    }
+    else {  
+      filterStatus.push(false);
+    }
+    // Time
+    let selectedStart;
+    let selectedEnd;
+    if (this.state.selectedTime === "lunch") {
+      selectedStart = 1130;
+      selectedEnd = 1330;
+    }
+    else if (this.state.selectedTime === "dinner") {
+      selectedStart = 1730;
+      selectedEnd = 1930;
+    }
+    if (this.state.selectedTime === "" || (selectedStart >= r.start && selectedEnd <= r.end)) {
+      filterStatus.push(true);
+    }
+    else {
+      filterStatus.push(false);
+    }
+    return filterStatus.every(val => val);
+  }
+
+  updateFilteredRestaurants() {
+    let currFilteredRestaurants = this.state.restaurantDBCopy.filter(r => this.matchFilter(r));
+    this.setState({filteredRestaurants: currFilteredRestaurants});
+  }
 
   render() {
 
@@ -74,53 +125,53 @@ class App extends Component {
       <View>
         {/* Vibe Filter */}
         <List.Accordion style={styles.list} left={props => <List.Icon {...props} icon="format-list-bulleted-type" />}>
-          <List.Item title="Good for clients" onPress={() => console.log('Pressed good for clients')}/> 
-          <List.Item title="Family Friendly" onPress={() => console.log('Pressed family friendly')}/> 
-          <List.Item title = "Happy Hour" onPress={() => console.log('Pressed happy hour')}/> 
-          <List.Item title = "Internal Team Bonding" onPress={() => console.log('Pressed internal team bonding')}/> 
+          <List.Item title="Good for clients" onPress={() => {this.setState({vibe: "good_for_clients"}); this.updateFilteredRestaurants();}}/> 
+          <List.Item title="Family Friendly" onPress={() => {this.setState({vibe : "family_friendly"}); this.updateFilteredRestaurants();}}/> 
+          <List.Item title = "Happy Hour" onPress={() => {this.setState({vibe: "happy_hour"}); this.updateFilteredRestaurants();}}/> 
+          <List.Item title = "Internal Team Bonding" onPress={() => {this.setState({vibe: "team_bonding"}); this.updateFilteredRestaurants();}}/> 
         </List.Accordion>
         
         {/* Party Size Filter */}
         <List.Accordion style={styles.list} left={props => <List.Icon {...props} icon="account-group"/>}>
-          <List.Item title="Small 2~4" onPress={() => console.log('Pressed small')}/> 
-          <List.Item title="Medium 5~9" onPress={() => console.log('Pressed medium')}/>
-          <List.Item title = "Large 10+" onPress={() => console.log('Pressed large')}/>
+          <List.Item title="Small 2~4" onPress={() => {this.setState({numPeople: "small"}); this.updateFilteredRestaurants();}}/> 
+          <List.Item title="Medium 5~9" onPress={() => {this.setState({numPeople: "medium"}); this.updateFilteredRestaurants();}}/>
+          <List.Item title = "Large 10+" onPress={() => {this.setState({numPeople: "large"}); this.updateFilteredRestaurants();}}/>
         </List.Accordion>
 
         {/* Time Filter */}
-        <List.Accordion style={styles.list} left={props => < List.Icon {...props} icon = "calendar-clock" />}>
-          <List.Item title="Lunch 11:30 -1:30" onPress={() => console.log('Pressed lunch')}/> 
-          <List.Item title = "Dinner 17:30 -19:30" onPress = {() => console.log('Pressed dinner')}/> 
+        <List.Accordion style={styles.list} left={props => <List.Icon {...props} icon = "calendar-clock" />}>
+          <List.Item title="Lunch 11:30 -1:30" onPress={() => {this.setState({selectedTime: "lunch"}); this.updateFilteredRestaurants();}}/> 
+          <List.Item title = "Dinner 17:30 -19:30" onPress = {() => {this.setState({selectedTime: "dinner"}); this.updateFilteredRestaurants();}}/> 
         </List.Accordion> 
       </View> 
 
-      {/* Budget Filter */} 
-      <TextInput icon="currency-usd" label='budget' onChangeText={text => this.setState({text})}/>
+      {/* Budget Filter  */}
+      <TextInput icon="currency-usd" label='budget' onChangeText={text => {this.setState({budget: text}); this.updateFilteredRestaurants();}}/>
       <Button onPress={this._showDialog}>Send out Poll</Button> 
     <Divider/>
     
     <FlatList
-          data={this.state.restaurantDBCopy}
+          data={this.state.filteredRestaurants}
           showsVerticalScrollIndicator={false}
           renderItem={({item}) =>
-          <View>
-            <Card>
-              <Card.Content>
-                <Title>{item.name}</Title>
-                <Paragraph>{item.type}</Paragraph>
-              </Card.Content>
-              <Card.Cover source={{ uri: 'https://picsum.photos/700' }} />
-              <Card.Actions>
-                <FAB
-                  style={styles.fab}
-                  small
-                  icon="plus"
-                  onPress={() => console.log('Pressed')}
-                />
-              </Card.Actions>
-            </Card>
-            <Divider/>
-          </View>
+            <View>
+              <Card>
+                <Card.Content>
+                  <Title>{item.name}</Title>
+                  <Paragraph>{item.type}</Paragraph>
+                </Card.Content>
+                <Card.Cover source={{ uri: 'https://picsum.photos/700' }} />
+                <Card.Actions>
+                  <FAB
+                    style={styles.fab}
+                    small
+                    icon="plus"
+                    onPress={() => console.log('Pressed')}
+                  />
+                </Card.Actions>
+              </Card>
+              <Divider/>
+            </View>
           }
           keyExtractor={(item, index) => index.toString()}
         />
