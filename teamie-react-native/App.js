@@ -1,45 +1,24 @@
-import React, {
-  Component
-} from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  AppRegistry,
-  ScrollView
-} from 'react-native';
-import {
-  Provider as PaperProvider,
-  Appbar
-} from 'react-native-paper';
-import {
-  Chip,
-  Avatar,
-  Button,
-  Card,
-  Title,
-  Paragraph,
-  List,
-  TextInput,
-  Dialog,
-  Portal
-} from 'react-native-paper';
-import * as firebase from 'firebase';
+import React, {Component} from 'react';
+import {StyleSheet, Text,View, AppRegistry, ScrollView, FlatList} from 'react-native';
+import {Provider as PaperProvider, Appbar} from 'react-native-paper';
+import {Chip, Avatar, Button, Card, Title, Paragraph, List, TextInput, Dialog, Portal, Divider, FAB} from 'react-native-paper';
+// import * as firebase from 'firebase';
+import restaurantData from './restaurants.json';
 
 // Initialize Firebase
-const firebaseConfig = {
-  apiKey: "AIzaSyAFzpavaaS5qMRo8FSZsqsZAaglgXL8H04",
-  authDomain: "teamie-blue.firebaseapp.com",
-  databaseURL: "https://teamie-blue.firebaseio.com",
-  projectId: "teamie-blue",
-  storageBucket: "teamie-blue.appspot.com",
-  messagingSenderId: "373175945503",
-  appId: "1:373175945503:web:0ce516f07c5d387642882a"
-};
+// const firebaseConfig = {
+//   apiKey: "AIzaSyAFzpavaaS5qMRo8FSZsqsZAaglgXL8H04",
+//   authDomain: "teamie-blue.firebaseapp.com",
+//   databaseURL: "https://teamie-blue.firebaseio.com",
+//   projectId: "teamie-blue",
+//   storageBucket: "teamie-blue.appspot.com",
+//   messagingSenderId: "373175945503",
+//   appId: "1:373175945503:web:0ce516f07c5d387642882a"
+// };
 
-firebase.initializeApp(firebaseConfig);
+// firebase.initializeApp(firebaseConfig);
 
-const db = firebase.database();
+// const db = firebase.database();
 
 
 class App extends Component {
@@ -49,7 +28,7 @@ class App extends Component {
       expanded: true,
       text: '',
       visible: false,
-      databaseCopy: {}
+      databaseCopy: restaurantData
     }
     //this.handleData = this.handleData.bind(this);
     //db.ref().on('value', this.handleData, e => console.log(e));
@@ -75,97 +54,76 @@ class App extends Component {
 
 
   render() {
-    let restaurantsList = [];
-    db.ref().on('value', (snap) => {
-      snap.val().restaurants.map(r => {
-        restaurantsList.push(r.name)
-        console.log(restaurantsList);
-      })
-    }, e => console.log(e));
+    // let restaurantsList = [];
+    // db.ref().on('value', (snap) => {
+    //   snap.val().restaurants.map(r => {
+    //     restaurantsList.push(r.name)
+    //     console.log(restaurantsList);
+    //   })
+    // }, e => console.log(e));
+
+    this.state.databaseCopy.restaurants.map(r => {
+      console.log(r.name);
+    })
 
     return ( <ScrollView >
-      <Appbar style = {
-        styles.bottom
-      } >
-      <Appbar.Content title = "Teamie"/>
-
-      <Appbar.Action icon = "cart-minus"
-      onPress = {
-        this._showDialog
-      }
-      /> 
+      <Appbar style={styles.bottom}>
+        <Appbar.Content title = "Teamie"/>
       </Appbar>
 
-
       <View>
-      <List.Accordion style = {
-        styles.list
-      }
-      //title="The vibe we want"
-      left = {
-        props => < List.Icon {
-          ...props
-        }
-        icon = "format-list-bulleted-type" />
-      }
-      //expanded={this.state.expanded}
-      //onPress={this._handlePress}
-      >
-      <List.Item title = "Good for clients"
-      onPress = {
-        () => console.log('Pressed good for clients')
-      }
-      /> 
-      <List.Item title = "Family Friendly"
-      onPress = {() => console.log('Pressed family friendly')}/> 
-      <List.Item title = "Happy Hour" onPress = {() => console.log('Pressed happy hour')}/> 
-      <List.Item title = "Internal Team Bonding" onPress = {() => console.log('Pressed internal team bonding')}/> 
-      </List.Accordion> 
-      <List.Accordion style = {styles.list}
-      //title="Our Party Size is"
-      left = {
-        props => < List.Icon {
-          ...props
-        }
-        icon = "account-group" />
-      } >
-      <List.Item title = "Small 2~4"
-      onPress = {
-        () => console.log('Pressed small')
-      }
-      /> <List.Item title = "Medium 5~9"
-      onPress = {
-        () => console.log('Pressed medium')
-      }
-      /> <List.Item title = "Large 10+"
-      onPress = {() => console.log('Pressed large')}/>
+        {/* Vibe Filter */}
+        <List.Accordion style={styles.list} left={props => <List.Icon {...props} icon="format-list-bulleted-type" />}>
+          <List.Item title="Good for clients" onPress={() => console.log('Pressed good for clients')}/> 
+          <List.Item title="Family Friendly" onPress={() => console.log('Pressed family friendly')}/> 
+          <List.Item title = "Happy Hour" onPress={() => console.log('Pressed happy hour')}/> 
+          <List.Item title = "Internal Team Bonding" onPress={() => console.log('Pressed internal team bonding')}/> 
+        </List.Accordion>
+        
+        {/* Party Size Filter */}
+        <List.Accordion style={styles.list} left={props => <List.Icon {...props} icon="account-group"/>}>
+          <List.Item title="Small 2~4" onPress={() => console.log('Pressed small')}/> 
+          <List.Item title="Medium 5~9" onPress={() => console.log('Pressed medium')}/>
+          <List.Item title = "Large 10+" onPress={() => console.log('Pressed large')}/>
+        </List.Accordion>
 
-      </List.Accordion>
-
-      <List.Accordion style = {styles.list}
-      //title="Our Time Preference is"
-      left = {props => < List.Icon {...props}
-        icon = "calendar-clock" />
-      } >
-      <List.Item title = "Lunch 11:30 -1:30"
-      onPress = {
-        () => console.log('Pressed lunch')
-      }
-      /> 
-      <List.Item title = "Dinner 17:30 -19:30"
-      onPress = {() => console.log('Pressed dinner')}
-      /> 
-      </List.Accordion> 
+        {/* Time Filter */}
+        <List.Accordion style={styles.list} left={props => < List.Icon {...props} icon = "calendar-clock" />}>
+          <List.Item title="Lunch 11:30 -1:30" onPress={() => console.log('Pressed lunch')}/> 
+          <List.Item title = "Dinner 17:30 -19:30" onPress = {() => console.log('Pressed dinner')}/> 
+        </List.Accordion> 
       </View> 
-      <TextInput icon = "currency-usd"
-      label = 'budget'
-      onChangeText = {
-        text => this.setState({
-          text
-        })
-      }
-      />
 
+      {/* Budget Filter */} 
+      <TextInput icon="currency-usd" label='budget' onChangeText={text => this.setState({text})}/>
+      <Button onPress={this._showDialog}>Send out Poll</Button> 
+    <Divider/>
+    
+    <FlatList
+          data={restaurantData.restaurants}
+          showsVerticalScrollIndicator={false}
+          renderItem={({item}) =>
+          <View>
+            <Card>
+              <Card.Content>
+                <Title>{item.name}</Title>
+                <Paragraph>{item.type}</Paragraph>
+              </Card.Content>
+              <Card.Cover source={{ uri: 'https://picsum.photos/700' }} />
+              <Card.Actions>
+                <FAB
+                  style={styles.fab}
+                  small
+                  icon="plus"
+                  onPress={() => console.log('Pressed')}
+                />
+              </Card.Actions>
+            </Card>
+            <Divider/>
+          </View>
+          }
+          keyExtractor={(item, index) => index.toString()}
+        />
 
       <View>
 
@@ -218,5 +176,12 @@ const styles = StyleSheet.create({
   restaurantCard: {
     color: 'blue',
     width: 325
-  }
+  },
+
+  fab: {
+    position: 'absolute',
+    margin: 16,
+    right: 0,
+    bottom: 0,
+  },
 });
