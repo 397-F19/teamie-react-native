@@ -2,23 +2,22 @@ import React, {Component} from 'react';
 import {StyleSheet, Text,View, AppRegistry, ScrollView, FlatList} from 'react-native';
 import {Provider as PaperProvider, Appbar} from 'react-native-paper';
 import {Chip, Avatar, Button, Card, Title, Paragraph, List, TextInput, Dialog, Portal, Divider, FAB} from 'react-native-paper';
-// import * as firebase from 'firebase';
-import restaurantData from './restaurants.json';
+import * as firebase from 'firebase';
 
 // Initialize Firebase
-// const firebaseConfig = {
-//   apiKey: "AIzaSyAFzpavaaS5qMRo8FSZsqsZAaglgXL8H04",
-//   authDomain: "teamie-blue.firebaseapp.com",
-//   databaseURL: "https://teamie-blue.firebaseio.com",
-//   projectId: "teamie-blue",
-//   storageBucket: "teamie-blue.appspot.com",
-//   messagingSenderId: "373175945503",
-//   appId: "1:373175945503:web:0ce516f07c5d387642882a"
-// };
+const firebaseConfig = {
+   apiKey: "AIzaSyAFzpavaaS5qMRo8FSZsqsZAaglgXL8H04",
+   authDomain: "teamie-blue.firebaseapp.com",
+   databaseURL: "https://teamie-blue.firebaseio.com",
+   projectId: "teamie-blue",
+   storageBucket: "teamie-blue.appspot.com",
+   messagingSenderId: "373175945503",
+   appId: "1:373175945503:web:0ce516f07c5d387642882a"
+ };
 
-// firebase.initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig);
 
-// const db = firebase.database();
+const db = firebase.database();
 
 
 class App extends Component {
@@ -28,12 +27,24 @@ class App extends Component {
       expanded: true,
       text: '',
       visible: false,
-      databaseCopy: restaurantData
+      restaurantDBCopy: []
     }
-    //this.handleData = this.handleData.bind(this);
-    //db.ref().on('value', this.handleData, e => console.log(e));
+    this.handleData = this.handleData.bind(this);
+    db.ref().on('value', this.handleData, e => console.log(e));
   }
 
+  handleData() {
+    let restaurantsList = [];
+    db.ref().on('value', (snap) => {
+      snap.val().restaurants.map(r => {
+        restaurantsList.push(r)
+      })
+    }, e => console.log(e));
+    this.setState({
+      restaurantDBCopy: restaurantsList
+    });
+    console.log("handleData called");
+  }
 
   componentDidMount() {
 
@@ -54,17 +65,6 @@ class App extends Component {
 
 
   render() {
-    // let restaurantsList = [];
-    // db.ref().on('value', (snap) => {
-    //   snap.val().restaurants.map(r => {
-    //     restaurantsList.push(r.name)
-    //     console.log(restaurantsList);
-    //   })
-    // }, e => console.log(e));
-
-    this.state.databaseCopy.restaurants.map(r => {
-      console.log(r.name);
-    })
 
     return ( <ScrollView >
       <Appbar style={styles.bottom}>
@@ -100,7 +100,7 @@ class App extends Component {
     <Divider/>
     
     <FlatList
-          data={restaurantData.restaurants}
+          data={this.state.restaurantDBCopy}
           showsVerticalScrollIndicator={false}
           renderItem={({item}) =>
           <View>
