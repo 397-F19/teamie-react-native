@@ -19,9 +19,10 @@ class RestaurantCard extends Component {
         <View style={{width: '30%'}}>
         <Image
           style={styles.image}
-          source={{uri: 'https://facebook.github.io/react-native/img/tiny_logo.png'}}
+          source={require('./images/1.jpg')}
         />
-        
+          
+
          </View>
         
         <View style={{width: '50%'}}>
@@ -54,7 +55,7 @@ class RestaurantCard extends Component {
         )
     }
     
-};
+};  
 
 const styles = StyleSheet.create({
     list: {

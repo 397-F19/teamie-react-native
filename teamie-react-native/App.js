@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, Image, View, AppRegistry, ScrollView, FlatList} from 'react-native';
 import {Provider as PaperProvider, Appbar} from 'react-native-paper';
-import {Chip, Avatar, Button, Card, Title, Paragraph, List, TextInput, Dialog, Portal, Divider, FAB} from 'react-native-paper';
+import {Snackbar, Chip, Avatar, Button, Card, Title, Paragraph, List, TextInput, Dialog, Portal, Divider, FAB} from 'react-native-paper';
 import * as firebase from 'firebase';
 import RestaurantCard from './RestaurantCard.js';
 
@@ -25,7 +25,7 @@ class App extends Component {
     super(props);
     this.state = {
       expanded: true,
-      visible: false,
+      visible: true,
       restaurantDBCopy: [],
       filteredRestaurants: [],
       vibe: "",
@@ -131,38 +131,67 @@ class App extends Component {
   render() {
 
     return ( <ScrollView >
-      <Appbar style={styles.bottom}>
+      <Appbar fixed style={styles.bottom} >
+      <Appbar.Action icon="filter-outline" onPress={this._showDialog} />
+       
         <Appbar.Content title = "Teamie"/>
       </Appbar>
-
       <View>
-        {/* Vibe Filter */}
-        <List.Accordion style={styles.list} left={props => <List.Icon {...props} icon="format-list-bulleted-type" />}>
-          <List.Item title="Good for clients" onPress={() => {this.setState({vibe: "good_for_clients"}); this.updateFilteredRestaurants();}}/> 
-          <List.Item title="Family Friendly" onPress={() => {this.setState({vibe : "family_friendly"}); this.updateFilteredRestaurants();}}/> 
-          <List.Item title = "Happy Hour" onPress={() => {this.setState({vibe: "happy_hour"}); this.updateFilteredRestaurants();}}/> 
-          <List.Item title = "Internal Team Bonding" onPress={() => {this.setState({vibe: "team_bonding"}); this.updateFilteredRestaurants();}}/> 
-        </List.Accordion>
+
+        <Portal>
+          <Dialog
+             visible={this.state.visible}
+             onDismiss={this._hideDialog}>
+                <ScrollView>
+
+            <Dialog.Content>
+               
+         
+           {/* Vibe Filter */}
+          <Text>Vibe</Text>
+          <Chip outlined onPress={() => {this.setState({vibe: "good_for_clients"}); this.updateFilteredRestaurants();}}>Good for clients</Chip>   
+          <Chip onPress={() => {this.setState({vibe : "family_friendly"}); this.updateFilteredRestaurants();}}>Family Friendly</Chip>
+          <Chip onPress={() => {this.setState({vibe: "happy_hour"}); this.updateFilteredRestaurants();}}>Happy Hour</Chip>
+          <Chip onPress={() => {this.setState({vibe: "team_bonding"}); this.updateFilteredRestaurants();}}>Internal Team Bonding</Chip>
+           {/* Size Filter */}
+          <Text>Size</Text>
+          <Chip onPress={() => {this.setState({numPeople: "small"}); this.updateFilteredRestaurants();}}>Small 2~4</Chip>
+          <Chip onPress={() => {this.setState({numPeople: "medium"}); this.updateFilteredRestaurants();}}>Medium 5~9</Chip>
+          <Chip onPress={() => {this.setState({numPeople: "large"}); this.updateFilteredRestaurants();}}>Large 10+</Chip>
+           {/* Time Filter */}
+          <Text>Time</Text>
+          <Chip onPress={() => {this.setState({selectedTime: "lunch"}); this.updateFilteredRestaurants();}}>Lunch 11:30 -1:30</Chip>
+          <Chip onPress = {() => {this.setState({selectedTime: "dinner"}); this.updateFilteredRestaurants();}}>Dinner 17:30 -19:30</Chip>
+           {/* Budget Filter */}
+          <Text>Budget</Text>
+          <TextInput icon="currency-usd" label='budget' onChangeText={text => {this.setState({budget: text}); this.updateFilteredRestaurants();}}/>
+          
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button onPress={this._hideDialog}>Done</Button>
+            </Dialog.Actions>
+            </ScrollView>
+          </Dialog>
+        </Portal>
+
+
         
-        {/* Party Size Filter */}
-        <List.Accordion style={styles.list} left={props => <List.Icon {...props} icon="account-group"/>}>
-          <List.Item title="Small 2~4" onPress={() => {this.setState({numPeople: "small"}); this.updateFilteredRestaurants();}}/> 
-          <List.Item title="Medium 5~9" onPress={() => {this.setState({numPeople: "medium"}); this.updateFilteredRestaurants();}}/>
-          <List.Item title = "Large 10+" onPress={() => {this.setState({numPeople: "large"}); this.updateFilteredRestaurants();}}/>
-        </List.Accordion>
+         <FlatList
+            data={this.state.selectedRestaurants}
+            renderItem={({item}) =>
+            <View>
+              <Text>
+                {item}
+              </Text>
+            </View>}>
+            </FlatList>
+            <Button onPress = {this._hideDialog}>Send out poll</Button> 
+       
+      </View>
+     
+      
+      
 
-        {/* Time Filter */}
-        <List.Accordion style={styles.list} left={props => <List.Icon {...props} icon = "calendar-clock" />}>
-          <List.Item title="Lunch 11:30 -1:30" onPress={() => {this.setState({selectedTime: "lunch"}); this.updateFilteredRestaurants();}}/> 
-          <List.Item title = "Dinner 17:30 -19:30" onPress = {() => {this.setState({selectedTime: "dinner"}); this.updateFilteredRestaurants();}}/> 
-        </List.Accordion> 
-      </View> 
-
-      {/* Budget Filter  */}
-      <TextInput icon="currency-usd" label='budget' onChangeText={text => {this.setState({budget: text}); this.updateFilteredRestaurants();}}/>
-      <Button onPress={this._showDialog}>Send out Poll</Button> 
-    <Divider/>
-    
     <FlatList
           data={this.state.filteredRestaurants}
           showsVerticalScrollIndicator={false}
@@ -197,7 +226,7 @@ class App extends Component {
         />
 
       <View>
-
+{/* 
       <Portal>
         <Dialog visible = {this.state.visible} onDismiss = {this._hideDialog}>
         <Dialog.Title> Poll </Dialog.Title> 
@@ -217,7 +246,8 @@ class App extends Component {
           </Dialog.Actions> 
         </Dialog> 
       </Portal> 
-
+*/}
+   
       
       </View> 
 
@@ -283,5 +313,11 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     backgroundColor: '#8a2be2', 
+  },
+  bottom: {
+    position: 'relative',
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
 });
