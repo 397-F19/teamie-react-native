@@ -3,6 +3,7 @@ import {StyleSheet, Text, Image, View, AppRegistry, ScrollView, FlatList} from '
 import {Provider as PaperProvider, Appbar} from 'react-native-paper';
 import {Chip, Avatar, Button, Card, Title, Paragraph, List, TextInput, Dialog, Portal, Divider, FAB} from 'react-native-paper';
 import * as firebase from 'firebase';
+import RestaurantCard from './RestaurantCard.js';
 
 // Initialize Firebase
 const firebaseConfig = {
@@ -30,7 +31,8 @@ class App extends Component {
       vibe: "",
       numPeople: "",
       budget: "",
-      selectedTime: ""
+      selectedTime: "",
+      selectedRestaurants: []
     }
     this.handleData = this.handleData.bind(this);
     db.ref().on('value', this.handleData, e => console.log(e));
@@ -115,6 +117,17 @@ class App extends Component {
     this.setState({filteredRestaurants: currFilteredRestaurants});
   }
 
+  addToPoll(selectedRestaurant) {
+    let newSelectedRestaurants = this.state.selectedRestaurants.concat([selectedRestaurant]);
+    console.log("adding to poll, color: ");
+    this.setState({selectedRestaurants: newSelectedRestaurants});
+  }
+
+  deleteFromPoll(selectedRestaurant) {
+    let newSelectedRestaurants = this.state.selectedRestaurants.filter(r => r !== selectedRestaurant);
+    this.setState({selectedRestaurants: newSelectedRestaurants});
+  }
+
   render() {
 
     return ( <ScrollView >
@@ -154,29 +167,31 @@ class App extends Component {
           data={this.state.filteredRestaurants}
           showsVerticalScrollIndicator={false}
           renderItem={({item}) =>
-            <View style={styles.restaurantCard}>
+          <RestaurantCard addToPoll={this.addToPoll.bind(this)} deleteFromPoll={this.deleteFromPoll.bind(this)} restaurant={item}/>
+        //     <View style={styles.restaurantCard}>
            
-        <View style={{width: '30%'}}>
-        <Image
-          style={styles.image}
-          source={{uri: 'https://facebook.github.io/react-native/img/tiny_logo.png'}}
-        />
+        // <View style={{width: '30%'}}>
+        // <Image
+        //   style={styles.image}
+        //   source={{uri: 'https://facebook.github.io/react-native/img/tiny_logo.png'}}
+        // />
         
-         </View>
+        //  </View>
         
-        <View style={{width: '50%'}}>
-        <Text style={styles.headline}>{item.name}</Text>
-                  <Paragraph style={styles.info}>{item.type}</Paragraph>
-                  </View>
-        <View style={{width: '20%'}} >
-        <FAB
-                    style={styles.fab}
-                    small
-                    icon="plus"
-                   
-                  />
-                  </View>
-                 </View>
+        // <View style={{width: '50%'}}>
+        // <Text style={styles.headline}>{item.name}</Text>
+        //           <Paragraph style={styles.info}>{item.type}</Paragraph>
+        //           </View>
+        // <View style={{width: '20%'}} >
+        // <FAB
+        //             style={styles.fab}
+        //             small
+        //             icon="plus" 
+                    
+        //             onPress={(style) => {this.addToPoll(style, this.state.selectedRestaurants.concat([item.name]))}}
+        //           />
+        //           </View>
+        //   </View>
           }
           keyExtractor={(item, index) => index.toString()}
         />
@@ -187,8 +202,15 @@ class App extends Component {
         <Dialog visible = {this.state.visible} onDismiss = {this._hideDialog}>
         <Dialog.Title> Poll </Dialog.Title> 
           <Dialog.Content>
-            <Paragraph> Option 1 </Paragraph>
-            <Paragraph> Option 2 </Paragraph> 
+            <FlatList
+            data={this.state.selectedRestaurants}
+            renderItem={({item}) =>
+            <View>
+              <Paragraph>
+                {item}
+              </Paragraph>
+            </View>}>
+            </FlatList>
           </Dialog.Content> 
           <Dialog.Actions >
             <Button onPress = {this._hideDialog}>Send out poll</Button> 
@@ -260,5 +282,6 @@ const styles = StyleSheet.create({
     margin: 16,
     right: 0,
     bottom: 0,
+    backgroundColor: '#8a2be2', 
   },
 });
