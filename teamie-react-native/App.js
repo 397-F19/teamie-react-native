@@ -152,6 +152,10 @@ class App extends Component {
     this.setState({selectedRestaurants: newSelectedRestaurants});
   }
 
+  showPollDialog() {
+
+  }
+
   render() {
     return ( <ScrollView >
       <Appbar fixed style={styles.bottom} >
@@ -230,8 +234,15 @@ class App extends Component {
             </ScrollView>
           </Dialog>
         </Portal>
+        
+        {/* Poll Dialog */}
+        <Portal>
+          <Dialog visible={this.state.visible} onDismiss={this._hideDialog}>
+            <Dialog.Content>
 
-
+            </Dialog.Content>
+          </Dialog>
+        </Portal>
         
          <FlatList style={styles.poll} 
             data={this.state.selectedRestaurants}
@@ -242,7 +253,7 @@ class App extends Component {
               </Text>
             </View>}>
             </FlatList>
-            <Button onPress ={this._hideDialog}>Send out poll</Button> 
+            <Button onPress ={this.showPollDialog()}>Send out poll</Button> 
        
       </View>
      
