@@ -28,7 +28,12 @@ class App extends Component {
       visible: true,
       restaurantDBCopy: [],
       filteredRestaurants: [],
-      vibe: "",
+      vibe: {
+        "good_for_clients": false,
+        "family_friendly": false,
+        "happy_hour": false,
+        "team_bonding": false,
+      },
       numPeople: "",
       budget: "",
       selectedTime: "",
@@ -72,7 +77,27 @@ class App extends Component {
   matchFilter (r) {
     let filterStatus = []
     // Vibe
-    if (this.state.vibe === "" || r.vibes.includes(this.state.vibe)) {
+    let selectedVibes = {
+      "good_for_clients" : r.vibes.indexOf("good_for_clients") != -1, 
+      "family_friendly" : r.vibes.indexOf("family_friendly") != -1, 
+      "happy_hour" : r.vibes.indexOf("happy_hour") != -1, 
+      "team_bonding" : r.vibes.indexOf("team_bonding") != -1
+    }
+    console.log("selected vibes")
+    console.log(JSON.stringify(selectedVibes)) 
+    console.log("vibes")
+    console.log(JSON.stringify(this.state.vibe))
+    
+    if (
+          ((this.state.vibe["good_for_clients"] == false) &&
+          (this.state.vibe["family_friendly"] == false) &&
+          (this.state.vibe["happy_hour"] == false) &&
+          (this.state.vibe["team_bonding"] == false)) ||
+          
+          ((this.state.vibe["good_for_clients"] == selectedVibes["good_for_clients"]) ||
+          (this.state.vibe["family_friendly"] == selectedVibes["family_friendly"]) ||
+          (this.state.vibe["happy_hour"] == selectedVibes["happy_hour"]) ||
+          (this.state.vibe["team_bonding"] == selectedVibes["team_bonding"]))) {
       filterStatus.push(true);
     }
     else {
@@ -129,7 +154,6 @@ class App extends Component {
   }
 
   render() {
-
     return ( <ScrollView >
       <Appbar fixed style={styles.bottom} >
       <Appbar.Action icon="filter-outline" onPress={this._showDialog} />
@@ -149,19 +173,42 @@ class App extends Component {
          
            {/* Vibe Filter */}
           <Text>Vibe</Text>
-          <Chip outlined onPress={() => {this.setState({vibe: "good_for_clients"}); this.updateFilteredRestaurants();}}>Good for clients</Chip>   
-          <Chip onPress={() => {this.setState({vibe : "family_friendly"}); this.updateFilteredRestaurants();}}>Family Friendly</Chip>
-          <Chip onPress={() => {this.setState({vibe: "happy_hour"}); this.updateFilteredRestaurants();}}>Happy Hour</Chip>
-          <Chip onPress={() => {this.setState({vibe: "team_bonding"}); this.updateFilteredRestaurants();}}>Internal Team Bonding</Chip>
+          <Chip style={styles.chip} selected={this.state.vibe["good_for_clients"]} onPress={() => {
+            let updatedVibe = this.state.vibe; 
+            updatedVibe["good_for_clients"] = !updatedVibe["good_for_clients"]; 
+            this.setState({vibe: updatedVibe}); 
+            this.updateFilteredRestaurants();  
+            }}>Good for clients</Chip>   
+
+          <Chip style={styles.chip} selected={this.state.vibe["family_friendly"]} onPress={() => {
+            let updatedVibe = this.state.vibe; 
+            updatedVibe["family_friendly"] = !updatedVibe["family_friendly"]; 
+            this.setState({vibe: updatedVibe}); 
+            this.updateFilteredRestaurants();  
+            }}>Family Friendly</Chip>
+
+          <Chip style={styles.chip} selected={this.state.vibe["happy_hour"]} onPress={() => {
+            let updatedVibe = this.state.vibe; 
+            updatedVibe["happy_hour"] = !updatedVibe["happy_hour"]; 
+            this.setState({vibe: updatedVibe}); 
+            this.updateFilteredRestaurants();  
+            }}>Happy Hour</Chip>
+
+          <Chip style={styles.chip} selected={this.state.vibe["team_bonding"]} onPress={() => {
+            let updatedVibe = this.state.vibe; 
+            updatedVibe["team_bonding"] = !updatedVibe["team_bonding"];
+            this.setState({vibe: updatedVibe}); 
+            this.updateFilteredRestaurants();  
+            }}>Internal Team Bonding</Chip>
            {/* Size Filter */}
           <Text>Size</Text>
-          <Chip onPress={() => {this.setState({numPeople: "small"}); this.updateFilteredRestaurants();}}>Small 2~4</Chip>
-          <Chip onPress={() => {this.setState({numPeople: "medium"}); this.updateFilteredRestaurants();}}>Medium 5~9</Chip>
-          <Chip onPress={() => {this.setState({numPeople: "large"}); this.updateFilteredRestaurants();}}>Large 10+</Chip>
+          <Chip style={styles.chip} style={styles.chip} onPress={() => {this.setState({numPeople: "small"}); this.updateFilteredRestaurants();}}>Small 2~4</Chip>
+          <Chip style={styles.chip} style={styles.chip} onPress={() => {this.setState({numPeople: "medium"}); this.updateFilteredRestaurants();}}>Medium 5~9</Chip>
+          <Chip style={styles.chip} onPress={() => {this.setState({numPeople: "large"}); this.updateFilteredRestaurants();}}>Large 10+</Chip>
            {/* Time Filter */}
           <Text>Time</Text>
-          <Chip onPress={() => {this.setState({selectedTime: "lunch"}); this.updateFilteredRestaurants();}}>Lunch 11:30 -1:30</Chip>
-          <Chip onPress = {() => {this.setState({selectedTime: "dinner"}); this.updateFilteredRestaurants();}}>Dinner 17:30 -19:30</Chip>
+          <Chip style={styles.chip} onPress={() => {this.setState({selectedTime: "lunch"}); this.updateFilteredRestaurants();}}>Lunch 11:30 -1:30</Chip>
+          <Chip style={styles.chip} onPress = {() => {this.setState({selectedTime: "dinner"}); this.updateFilteredRestaurants();}}>Dinner 17:30 -19:30</Chip>
            {/* Budget Filter */}
           <Text>Budget</Text>
           <TextInput icon="currency-usd" label='budget' onChangeText={text => {this.setState({budget: text}); this.updateFilteredRestaurants();}}/>
@@ -176,16 +223,16 @@ class App extends Component {
 
 
         
-         <FlatList
+         <FlatList style={styles.poll} 
             data={this.state.selectedRestaurants}
             renderItem={({item}) =>
             <View>
-              <Text>
+              <Text style={styles.cart}>
                 {item}
               </Text>
             </View>}>
             </FlatList>
-            <Button onPress = {this._hideDialog}>Send out poll</Button> 
+            <Button onPress ={this._hideDialog}>Send out poll</Button> 
        
       </View>
      
@@ -319,5 +366,20 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
+    height: 100,
+  },
+  chip:{
+    
+    marginTop: 1, 
+  
+  },
+  cart:{
+    backgroundColor: '#8a2be2', 
+    color: '#fff',
+    fontSize: 16,
+    padding: 6,
+  },
+  poll:{
+    borderBottomColor: '#fff',
   },
 });
