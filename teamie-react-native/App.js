@@ -200,15 +200,18 @@ class App extends Component {
             this.setState({vibe: updatedVibe}); 
             this.updateFilteredRestaurants();  
             }}>Internal Team Bonding</Chip>
+
            {/* Size Filter */}
           <Text>Size</Text>
           <Chip style={styles.chip} style={styles.chip} onPress={() => {this.setState({numPeople: "small"}); this.updateFilteredRestaurants();}}>Small 2~4</Chip>
           <Chip style={styles.chip} style={styles.chip} onPress={() => {this.setState({numPeople: "medium"}); this.updateFilteredRestaurants();}}>Medium 5~9</Chip>
           <Chip style={styles.chip} onPress={() => {this.setState({numPeople: "large"}); this.updateFilteredRestaurants();}}>Large 10+</Chip>
+           
            {/* Time Filter */}
           <Text>Time</Text>
           <Chip style={styles.chip} onPress={() => {this.setState({selectedTime: "lunch"}); this.updateFilteredRestaurants();}}>Lunch 11:30 -1:30</Chip>
           <Chip style={styles.chip} onPress = {() => {this.setState({selectedTime: "dinner"}); this.updateFilteredRestaurants();}}>Dinner 17:30 -19:30</Chip>
+           
            {/* Budget Filter */}
           <Text>Budget</Text>
           <TextInput icon="currency-usd" label='budget' onChangeText={text => {this.setState({budget: text}); this.updateFilteredRestaurants();}}/>
