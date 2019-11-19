@@ -236,13 +236,13 @@ class App extends Component {
         </Portal>
         
         {/* Poll Dialog */}
-        <Portal>
+        {/* <Portal>
           <Dialog visible={this.state.visible} onDismiss={this._hideDialog}>
             <Dialog.Content>
 
             </Dialog.Content>
           </Dialog>
-        </Portal>
+        </Portal> */}
         
          <FlatList style={styles.poll} 
             data={this.state.selectedRestaurants}
