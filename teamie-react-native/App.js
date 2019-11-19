@@ -36,7 +36,10 @@ class App extends Component {
       },
       numPeople: "",
       budget: "",
-      selectedTime: "",
+      selectedTime: {
+        "lunch": false,
+        "dinner": false,
+      },
       selectedRestaurants: []
     }
     this.handleData = this.handleData.bind(this);
@@ -54,13 +57,8 @@ class App extends Component {
       restaurantDBCopy: restaurantsList,
       filteredRestaurants: restaurantsList
     });
-    console.log("handleData called");
   }
-
-  componentDidMount() {
-
-  }
-
+  
   _handlePress = () =>
     this.setState({
       expanded: !this.state.expanded
@@ -83,10 +81,6 @@ class App extends Component {
       "happy_hour" : r.vibes.indexOf("happy_hour") != -1, 
       "team_bonding" : r.vibes.indexOf("team_bonding") != -1
     }
-    console.log("selected vibes")
-    console.log(JSON.stringify(selectedVibes)) 
-    console.log("vibes")
-    console.log(JSON.stringify(this.state.vibe))
     
     if (
           ((this.state.vibe["good_for_clients"] == false) &&
@@ -120,15 +114,15 @@ class App extends Component {
     // Time
     let selectedStart;
     let selectedEnd;
-    if (this.state.selectedTime === "lunch") {
+    if (this.state.selectedTime["lunch"] == true) {
       selectedStart = 1130;
       selectedEnd = 1330;
     }
-    else if (this.state.selectedTime === "dinner") {
+    else if (this.state.selectedTime["dinner"] === true) {
       selectedStart = 1730;
       selectedEnd = 1930;
     }
-    if (this.state.selectedTime === "" || (selectedStart >= r.start && selectedEnd <= r.end)) {
+    if ((!this.state.selectedTime["lunch"] && !this.state.selectedTime["dinner"]) || (selectedStart >= r.start && selectedEnd <= r.end)) {
       filterStatus.push(true);
     }
     else {
@@ -144,7 +138,6 @@ class App extends Component {
 
   addToPoll(selectedRestaurant) {
     let newSelectedRestaurants = this.state.selectedRestaurants.concat([selectedRestaurant]);
-    console.log("adding to poll, color: ");
     this.setState({selectedRestaurants: newSelectedRestaurants});
   }
 
@@ -203,14 +196,22 @@ class App extends Component {
 
            {/* Size Filter */}
           <Text>Size</Text>
-          <Chip style={styles.chip} style={styles.chip} onPress={() => {this.setState({numPeople: "small"}); this.updateFilteredRestaurants();}}>Small 2~4</Chip>
-          <Chip style={styles.chip} style={styles.chip} onPress={() => {this.setState({numPeople: "medium"}); this.updateFilteredRestaurants();}}>Medium 5~9</Chip>
-          <Chip style={styles.chip} onPress={() => {this.setState({numPeople: "large"}); this.updateFilteredRestaurants();}}>Large 10+</Chip>
+          <Chip style={styles.chip} style={styles.chip} selected={this.state.numPeople === "small" ? true : false} onPress={() => {this.setState({numPeople: "small"}); this.updateFilteredRestaurants();}}>Small 2~4</Chip>
+          <Chip style={styles.chip} style={styles.chip} selected={this.state.numPeople === "medium" ? true : false} onPress={() => {this.setState({numPeople: "medium"}); this.updateFilteredRestaurants();}}>Medium 5~9</Chip>
+          <Chip style={styles.chip} selected={this.state.numPeople === "large" ? true : false} onPress={() => {this.setState({numPeople: "large"}); this.updateFilteredRestaurants();}}>Large 10+</Chip>
            
            {/* Time Filter */}
           <Text>Time</Text>
-          <Chip style={styles.chip} onPress={() => {this.setState({selectedTime: "lunch"}); this.updateFilteredRestaurants();}}>Lunch 11:30 -1:30</Chip>
-          <Chip style={styles.chip} onPress = {() => {this.setState({selectedTime: "dinner"}); this.updateFilteredRestaurants();}}>Dinner 17:30 -19:30</Chip>
+          <Chip style={styles.chip} selected={this.state.selectedTime["lunch"]} onPress={() => {
+            let updatedTime = this.state.selectedTime;
+            updatedTime["lunch"] = !updatedTime["lunch"];
+            this.setState({selectedTime: updatedTime}); 
+            this.updateFilteredRestaurants();}}>Lunch 11:30 - 1:30</Chip>
+          <Chip style={styles.chip} selected={this.state.selectedTime["dinner"]} onPress = {() => {
+            let updatedTime = this.state.selectedTime;
+            updatedTime["dinner"] = !updatedTime["dinner"];
+            this.setState({selectedTime: updatedTime}); 
+            this.updateFilteredRestaurants();}}>Dinner 17:30 - 19:30</Chip>
            
            {/* Budget Filter */}
           <Text>Budget</Text>
@@ -247,59 +248,9 @@ class App extends Component {
           showsVerticalScrollIndicator={false}
           renderItem={({item}) =>
           <RestaurantCard addToPoll={this.addToPoll.bind(this)} deleteFromPoll={this.deleteFromPoll.bind(this)} restaurant={item}/>
-        //     <View style={styles.restaurantCard}>
-           
-        // <View style={{width: '30%'}}>
-        // <Image
-        //   style={styles.image}
-        //   source={{uri: 'https://facebook.github.io/react-native/img/tiny_logo.png'}}
-        // />
-        
-        //  </View>
-        
-        // <View style={{width: '50%'}}>
-        // <Text style={styles.headline}>{item.name}</Text>
-        //           <Paragraph style={styles.info}>{item.type}</Paragraph>
-        //           </View>
-        // <View style={{width: '20%'}} >
-        // <FAB
-        //             style={styles.fab}
-        //             small
-        //             icon="plus" 
-                    
-        //             onPress={(style) => {this.addToPoll(style, this.state.selectedRestaurants.concat([item.name]))}}
-        //           />
-        //           </View>
-        //   </View>
           }
           keyExtractor={(item, index) => index.toString()}
         />
-
-      <View>
-{/* 
-      <Portal>
-        <Dialog visible = {this.state.visible} onDismiss = {this._hideDialog}>
-        <Dialog.Title> Poll </Dialog.Title> 
-          <Dialog.Content>
-            <FlatList
-            data={this.state.selectedRestaurants}
-            renderItem={({item}) =>
-            <View>
-              <Paragraph>
-                {item}
-              </Paragraph>
-            </View>}>
-            </FlatList>
-          </Dialog.Content> 
-          <Dialog.Actions >
-            <Button onPress = {this._hideDialog}>Send out poll</Button> 
-          </Dialog.Actions> 
-        </Dialog> 
-      </Portal> 
-*/}
-   
-      
-      </View> 
 
       </ScrollView>
     );
