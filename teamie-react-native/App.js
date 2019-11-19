@@ -17,7 +17,7 @@ const firebaseConfig = {
  };
 
 firebase.initializeApp(firebaseConfig);
-
+ 
 const db = firebase.database();
 
 class App extends Component {
@@ -58,7 +58,7 @@ class App extends Component {
       filteredRestaurants: restaurantsList
     });
   }
-  
+
   _handlePress = () =>
     this.setState({
       expanded: !this.state.expanded
@@ -105,7 +105,13 @@ class App extends Component {
       filterStatus.push(false);
     }
     // Budget
-    if (this.state.budget === "" || (parseFloat(r.price) <= parseFloat(this.state.budget))) {
+    console.log("restaurant price");
+    console.log(parseFloat(r.price));
+    console.log("this budget");
+    console.log(parseFloat(this.state.budget));
+    console.log("our state");
+    console.log(this.state.budget);
+    if ((this.state.budget === "") || (parseFloat(r.price) <= parseFloat(this.state.budget))) {
       filterStatus.push(true);
     }
     else {  
@@ -196,8 +202,8 @@ class App extends Component {
 
            {/* Size Filter */}
           <Text>Size</Text>
-          <Chip style={styles.chip} style={styles.chip} selected={this.state.numPeople === "small" ? true : false} onPress={() => {this.setState({numPeople: "small"}); this.updateFilteredRestaurants();}}>Small 2~4</Chip>
-          <Chip style={styles.chip} style={styles.chip} selected={this.state.numPeople === "medium" ? true : false} onPress={() => {this.setState({numPeople: "medium"}); this.updateFilteredRestaurants();}}>Medium 5~9</Chip>
+          <Chip style={styles.chip} style={styles.chip} selected={this.state.numPeople === "small" ? true : false} onPress={() => {this.setState({numPeople: "small"}); this.updateFilteredRestaurants();}}>Small 1-4</Chip>
+          <Chip style={styles.chip} style={styles.chip} selected={this.state.numPeople === "medium" ? true : false} onPress={() => {this.setState({numPeople: "medium"}); this.updateFilteredRestaurants();}}>Medium 5-9</Chip>
           <Chip style={styles.chip} selected={this.state.numPeople === "large" ? true : false} onPress={() => {this.setState({numPeople: "large"}); this.updateFilteredRestaurants();}}>Large 10+</Chip>
            
            {/* Time Filter */}
@@ -215,11 +221,11 @@ class App extends Component {
            
            {/* Budget Filter */}
           <Text>Budget</Text>
-          <TextInput icon="currency-usd" label='budget' onChangeText={text => {this.setState({budget: text}); this.updateFilteredRestaurants();}}/>
+          <TextInput icon="currency-usd" label='budget' value={this.state.budget} onChangeText={(text) => {this.setState({budget: text}); }}/>
           
             </Dialog.Content>
             <Dialog.Actions>
-              <Button onPress={this._hideDialog}>Done</Button>
+              <Button onPress={() => {this._hideDialog(); this.updateFilteredRestaurants();}}>Done</Button>
             </Dialog.Actions>
             </ScrollView>
           </Dialog>
