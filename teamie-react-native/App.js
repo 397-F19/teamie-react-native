@@ -175,7 +175,7 @@ class App extends Component {
                
          
            {/* Vibe Filter */}
-          <Text>Vibe</Text>
+          <Text style={styles.filterHeading}>Vibe</Text>
           <Chip style={styles.chip} selected={this.state.vibe["good_for_clients"]} onPress={() => {
             let updatedVibe = this.state.vibe; 
             updatedVibe["good_for_clients"] = !updatedVibe["good_for_clients"]; 
@@ -205,13 +205,13 @@ class App extends Component {
             }}>Internal Team Bonding</Chip>
 
            {/* Size Filter */}
-          <Text>Size</Text>
+          <Text style={styles.filterHeading}>Size</Text>
           <Chip style={styles.chip} style={styles.chip} selected={this.state.numPeople === "small" ? true : false} onPress={() => {this.setState({numPeople: "small"}); this.updateFilteredRestaurants();}}>Small 1-4</Chip>
           <Chip style={styles.chip} style={styles.chip} selected={this.state.numPeople === "medium" ? true : false} onPress={() => {this.setState({numPeople: "medium"}); this.updateFilteredRestaurants();}}>Medium 5-9</Chip>
           <Chip style={styles.chip} selected={this.state.numPeople === "large" ? true : false} onPress={() => {this.setState({numPeople: "large"}); this.updateFilteredRestaurants();}}>Large 10+</Chip>
            
            {/* Time Filter */}
-          <Text>Time</Text>
+          <Text style={styles.filterHeading}>Time</Text>
           <Chip style={styles.chip} selected={this.state.selectedTime["lunch"]} onPress={() => {
             let updatedTime = this.state.selectedTime;
             updatedTime["lunch"] = !updatedTime["lunch"];
@@ -224,7 +224,7 @@ class App extends Component {
             this.updateFilteredRestaurants();}}>Dinner 17:30 - 19:30</Chip>
            
            {/* Budget Filter */}
-          <Text>Budget</Text>
+          <Text style={styles.filterHeading}>Budget</Text>
           <TextInput icon="currency-usd" label='budget' value={this.state.budget} onChangeText={(text) => {this.setState({budget: text}); }}/>
           
             </Dialog.Content>
@@ -353,4 +353,7 @@ const styles = StyleSheet.create({
   poll:{
     borderBottomColor: '#fff',
   },
+  filterHeading: {
+    paddingTop: 20
+  }
 });
