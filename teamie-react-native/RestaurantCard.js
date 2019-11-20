@@ -16,13 +16,11 @@ class RestaurantCard extends Component {
         return(
             <View style={styles.restaurantCard}>
            
-        <View style={{width: '30%'}}>
+        <View style={styles.imageWrapper}>
         <Image
           style={styles.image}
           source={require('./images/1.jpg')}
         />
-          
-
          </View>
         
         <View style={{width: '50%'}}>
@@ -77,15 +75,25 @@ const styles = StyleSheet.create({
       flexDirection: 'row',
       justifyContent: 'space-between',
       margin: 2,
-      borderWidth: 1,
-      borderRadius: 4, 
-      borderStyle: "solid",
-      borderColor: '#000', 
+      width: '95%',
+      // borderWidth: 1,
+      // borderStyle: "solid",
+      // borderColor: '#000', 
+      backgroundColor: '#fafafa',
+      borderRadius: 10,
+      borderBottomWidth: 0,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.5,
+      shadowRadius: 4,
+      marginTop: 20,
     },
     image: {
       margin: 0,
       width: 100,
       height: 100,
+      borderRadius: 10,
+      shadowColor: '#fff',
     },
     headline: {
       marginTop: 20,
@@ -104,5 +112,8 @@ const styles = StyleSheet.create({
       right: 0,
       bottom: 0,
     },
+    imageWrapper: {
+      width: '30%',
+    }
   });
 export default RestaurantCard;

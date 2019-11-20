@@ -261,6 +261,7 @@ class App extends Component {
       
 
     <FlatList
+          style={styles.restaurantList}
           data={this.state.filteredRestaurants}
           showsVerticalScrollIndicator={false}
           renderItem={({item}) =>
@@ -355,5 +356,8 @@ const styles = StyleSheet.create({
   },
   filterHeading: {
     paddingTop: 20
+  },
+  restaurantList: {
+    marginLeft: 10,
   }
 });
