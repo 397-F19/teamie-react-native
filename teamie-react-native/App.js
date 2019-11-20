@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, Image, View, AppRegistry, ScrollView, FlatList} from 'react-native';
+import {StyleSheet, Text, Image, View, AppRegistry, ScrollView, FlatList, Linking} from 'react-native';
 import {Provider as PaperProvider, Appbar} from 'react-native-paper';
 import {Snackbar, Chip, Avatar, Button, Card, Title, Paragraph, List, TextInput, Dialog, Portal, Divider, FAB} from 'react-native-paper';
 import * as firebase from 'firebase';
@@ -26,6 +26,7 @@ class App extends Component {
     this.state = {
       expanded: true,
       visible: true,
+      pollVisibility: false,
       restaurantDBCopy: [],
       filteredRestaurants: [],
       vibe: {
@@ -69,7 +70,8 @@ class App extends Component {
   });
 
   _hideDialog = () => this.setState({
-    visible: false
+    visible: false,
+    pollVisibility: false,
   });
 
   matchFilter (r) {
@@ -105,12 +107,12 @@ class App extends Component {
       filterStatus.push(false);
     }
     // Budget
-    console.log("restaurant price");
-    console.log(parseFloat(r.price));
-    console.log("this budget");
-    console.log(parseFloat(this.state.budget));
-    console.log("our state");
-    console.log(this.state.budget);
+    // console.log("restaurant price");
+    // console.log(parseFloat(r.price));
+    // console.log("this budget");
+    // console.log(parseFloat(this.state.budget));
+    // console.log("our state");
+    // console.log(this.state.budget);
     if ((this.state.budget === "") || (parseFloat(r.price) <= parseFloat(this.state.budget))) {
       filterStatus.push(true);
     }
@@ -153,7 +155,7 @@ class App extends Component {
   }
 
   showPollDialog() {
-
+    this.setState({pollVisibility: true});
   }
 
   render() {
@@ -235,14 +237,16 @@ class App extends Component {
           </Dialog>
         </Portal>
         
-        {/* Poll Dialog */}
-        {/* <Portal>
-          <Dialog visible={this.state.visible} onDismiss={this._hideDialog}>
+        <Portal>
+          <Dialog visible={this.state.pollVisibility} onDismiss={this._hideDialog}>
             <Dialog.Content>
-
+              <Text>Your poll has been generated!</Text>
+              <Text style={styles.filterHeading}>Link to poll: 
+                <Text style={styles.pollLink} onPress={() => Linking.openURL('https://teamie-blue.firebaseapp.com/voting/1,5,7')}> https://teamie-blue.firebaseapp.com/voting/1,5,7</Text>
+              </Text>
             </Dialog.Content>
           </Dialog>
-        </Portal> */}
+        </Portal>
         
          <FlatList style={styles.poll} 
             data={this.state.selectedRestaurants}
@@ -253,7 +257,7 @@ class App extends Component {
               </Text>
             </View>}>
             </FlatList>
-            <Button onPress ={this.showPollDialog()}>Send out poll</Button> 
+            <Button onPress={() => this.showPollDialog()}>Generate Poll</Button> 
        
       </View>
      
@@ -359,5 +363,9 @@ const styles = StyleSheet.create({
   },
   restaurantList: {
     marginLeft: 10,
+  },
+  pollLink: {
+    textDecorationLine: 'underline',
+    color: 'blue'
   }
 });
