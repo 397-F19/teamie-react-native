@@ -11,7 +11,7 @@ class RestaurantCard extends Component {
             icon: "plus"
         };
     };
-
+ 
     render() {
         return(
             <View style={styles.restaurantCard}>
@@ -23,11 +23,13 @@ class RestaurantCard extends Component {
         />
          </View>
         
-        <View style={{width: '50%'}}>
+        <View style={{width: '55%'}}>
         <Text style={styles.headline}>{this.props.restaurant.name}</Text>
-                  <Paragraph style={styles.info}>{this.props.restaurant.type}</Paragraph>
+                  <Paragraph style={styles.info}>{this.props.restaurant.type} ${this.props.restaurant.price}</Paragraph>
+                  <Paragraph style={styles.info}>{this.props.restaurant.distance} mil</Paragraph>
+                  <Paragraph style={styles.info}>{this.props.restaurant.time} min</Paragraph>
                   </View>
-        <View style={{width: '20%'}} >
+        <View style={{width: '15%'}} >
         <FAB
                     style={{position: 'absolute',
                             margin: 16,
@@ -52,7 +54,7 @@ class RestaurantCard extends Component {
           </View>
         )
     }
-    
+ 
 };  
 
 const styles = StyleSheet.create({
@@ -96,14 +98,15 @@ const styles = StyleSheet.create({
       shadowColor: '#fff',
     },
     headline: {
-      marginTop: 20,
+      marginTop: 8,
       marginLeft: 20,
       fontSize: 20,
     },
   
     info: {
       marginLeft: 20,
-      fontSize: 10
+      fontSize: 10,
+      marginTop: 1,
     },
   
     fab: {

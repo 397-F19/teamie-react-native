@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, Image, View, AppRegistry, ScrollView, FlatList, Linking} from 'react-native';
+import {StyleSheet, Text, Image, View, AppRegistry, ScrollView, FlatList, Linking, Dimensions} from 'react-native';
 import {Provider as PaperProvider, Appbar} from 'react-native-paper';
-import {Snackbar, Chip, Avatar, Button, Card, Title, Paragraph, List, TextInput, Dialog, Portal, Divider, FAB} from 'react-native-paper';
+import {Snackbar, Chip, Avatar, Button, Card, Title, Paragraph, List, TextInput, Dialog, Portal, Divider, FAB, Menu} from 'react-native-paper';
 import * as firebase from 'firebase';
 import RestaurantCard from './RestaurantCard.js';
+
 
 // Initialize Firebase
 const firebaseConfig = {
@@ -27,6 +28,7 @@ class App extends Component {
       expanded: true,
       visible: true,
       pollVisibility: false,
+      sortVisibility: false,
       restaurantDBCopy: [],
       filteredRestaurants: [],
       vibe: {
@@ -41,7 +43,8 @@ class App extends Component {
         "lunch": false,
         "dinner": false,
       },
-      selectedRestaurants: []
+      selectedRestaurants: [],
+      location: ""
     }
     this.handleData = this.handleData.bind(this);
     db.ref().on('value', this.handleData, e => console.log(e));
@@ -68,6 +71,14 @@ class App extends Component {
   _showDialog = () => this.setState({
     visible: true
   });
+
+  _showSortDialog = () => this.setState({
+    sortVisibility: true
+  })
+
+  _closeSortDialog = () => this.setState({
+    sortVisibility: false
+  })
 
   _hideDialog = () => this.setState({
     visible: false,
@@ -139,8 +150,19 @@ class App extends Component {
     return filterStatus.every(val => val);
   }
 
+    // async fetchDistance() {
+    //   const response = await fetch(url);
+    //   if (!response.ok) throw response;
+    //   const json = await response.json();
+    //   setSchedule(json);
+    // };
+
   updateFilteredRestaurants() {
+    // this is where we make the api call to calculate distance
     let currFilteredRestaurants = this.state.restaurantDBCopy.filter(r => this.matchFilter(r));
+    currFilteredRestaurants.map(r => {
+
+    })
     this.setState({filteredRestaurants: currFilteredRestaurants});
   }
 
@@ -158,15 +180,70 @@ class App extends Component {
     this.setState({pollVisibility: true});
   }
 
+  sort(sortType) {
+    console.log("sort triggered")
+    if (sortType == "price_low_to_high") {
+      console.log("entered the right case")
+        let sortedFilteredRestaurants = this.state.filteredRestaurants.sort((a, b) => {
+            if (a.price < b.price) {
+              return -1;
+            }
+            if (a.price > b.price) {
+              return 1
+            }
+            return 0;
+        })
+        console.log("sorted filtered restaurants: " + JSON.stringify(sortedFilteredRestaurants));
+        this.setState({filteredRestaurants: sortedFilteredRestaurants});
+    }
+    // switch (sortType) {
+    //   case "price_low_to_high":
+    //     console.log("entered the right case")
+    //     let sortedFilteredRestaurants = this.state.filteredRestaurants.sort((a, b) => {
+    //         if (a.price < b.price) {
+    //           return -1;
+    //         }
+    //         if (a.price > b.price) {
+    //           return 1
+    //         }
+    //         return 0;
+    //     })
+    //     console.log("sorted filtered restaurants: " + JSON.stringify(sortedFilteredRestaurants));
+    //     this.setState({filteredRestaurants: sortedFilteredRestaurants})
+    //     break;
+    // }
+  }
+
   render() {
     return ( <ScrollView >
       <Appbar fixed style={styles.bottom} >
-      <Appbar.Action icon="filter-outline" onPress={this._showDialog} />
-       
+      <Appbar.Action icon="filter-outline" onPress={this._showDialog} />      
         <Appbar.Content title = "Teamie"/>
+        <Menu visible={this.state.sortVisibility}
+            onDismiss={this._closeSortDialog}
+            anchor={
+              <Appbar.Action icon="map-marker-distance" onPress={this._showSortDialog} />
+            }>
+          <Menu.Item onPress={() => {this.sort("price_low_to_high")}} title="Price low to high" />
+            <Divider />
+            <Menu.Item onPress={() => {this.sort("price_high_to_low")}} title="Price high to low" />
+            <Divider />
+            <Menu.Item onPress={() => {this.sort("distance_ascending")}} title="Distance ascending" />
+            <Divider />
+            <Menu.Item onPress={() => {this.sort("distance_descending")}} title="Distance descending" />
+        </Menu>
       </Appbar>
       <View>
 
+      <Menu
+            
+          >
+            <Menu.Item onPress={() => {}} title="Item 1" />
+            <Menu.Item onPress={() => {}} title="Item 2" />
+            <Divider />
+            <Menu.Item onPress={() => {}} title="Item 3" />
+          </Menu>
+          
         <Portal>
           <Dialog
              visible={this.state.visible}
@@ -228,6 +305,10 @@ class App extends Component {
            {/* Budget Filter */}
           <Text style={styles.filterHeading}>Budget</Text>
           <TextInput icon="currency-usd" label='budget' value={this.state.budget} onChangeText={(text) => {this.setState({budget: text}); }}/>
+
+          {/* Distance Filter */}
+          <Text style={styles.filterHeading}>Starting Location</Text>
+          <TextInput label='address' value={this.state.location} onChangeText={(text) => {this.setState({location: text}); }}/>
           
             </Dialog.Content>
             <Dialog.Actions>
@@ -247,7 +328,7 @@ class App extends Component {
             </Dialog.Content>
           </Dialog>
         </Portal>
-        
+
          <FlatList style={styles.poll} 
             data={this.state.selectedRestaurants}
             renderItem={({item}) =>
@@ -260,7 +341,7 @@ class App extends Component {
             <Button onPress={() => this.showPollDialog()}>Generate Poll</Button> 
        
       </View>
-     
+      
       
       
 
@@ -367,5 +448,9 @@ const styles = StyleSheet.create({
   pollLink: {
     textDecorationLine: 'underline',
     color: 'blue'
-  }
+  },
+  mapStyle: {
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height,
+  },
 });
