@@ -372,7 +372,7 @@ class App extends Component {
           data={this.state.filteredRestaurants}
           showsVerticalScrollIndicator={false}
           renderItem={({item}) =>
-          <RestaurantCard addToPoll={this.addToPoll.bind(this)} deleteFromPoll={this.deleteFromPoll.bind(this)} restaurant={item}/>
+          <RestaurantCard addToPoll={this.addToPoll.bind(this)} deleteFromPoll={this.deleteFromPoll.bind(this)} restaurant={item} imgUrl={"./images/" + item.id + ".jpg"}/>
           }
           keyExtractor={(item, index) => index.toString()}
         />
@@ -428,10 +428,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
 
-  info: {
-    marginLeft: 20,
-    fontSize: 10
-  },
+
 
   fab: {
     position: 'absolute',
@@ -476,6 +473,6 @@ const styles = StyleSheet.create({
     height: Dimensions.get('window').height,
   },
   sortIcon: {
-    backgroundColor: 'white'
+    color: '#fff'
   }
 });

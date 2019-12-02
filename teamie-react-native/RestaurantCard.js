@@ -11,23 +11,25 @@ class RestaurantCard extends Component {
             icon: "plus"
         };
     };
- 
+    
     render() {
+      var dat = {url: this.props.imgUrl};
+      let imgUrl = "https://loremflickr.com/240/240/food,restaurants,plate/all"
+      console.log("img url: " + this.props.imgUrl)
         return(
             <View style={styles.restaurantCard}>
            
         <View style={styles.imageWrapper}>
         <Image
           style={styles.image}
-          source={require('./images/1.jpg')}
+          source={{uri: this.props.restaurant.imgUrl}}
         />
          </View>
         
         <View style={{width: '55%'}}>
         <Text style={styles.headline}>{this.props.restaurant.name}</Text>
                   <Paragraph style={styles.info}>{this.props.restaurant.type} ${this.props.restaurant.price}</Paragraph>
-                  <Paragraph style={styles.info}>{this.props.restaurant.distance} mil</Paragraph>
-                  <Paragraph style={styles.info}>{this.props.restaurant.time} min</Paragraph>
+                  <Paragraph style={styles.info}>{this.props.restaurant.distance} mi, {this.props.restaurant.time} min</Paragraph>
                   </View>
         <View style={{width: '15%'}} >
         <FAB
