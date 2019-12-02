@@ -46,10 +46,7 @@ class App extends Component {
       selectedRestaurants: [],
       location: "",
     }
-    this.handleData = this.handleData.bind(this);
-    db.ref().on('value', this.handleData, e => console.log(e));
   }
-
   handleData() {
     let restaurantsList = [];
     db.ref().on('value', (snap) => {
@@ -181,9 +178,7 @@ class App extends Component {
   }
 
   sortRestaurants(sortType) {
-    console.log("sort triggered")
     if (sortType == "price_low_to_high") {
-      console.log("entered the right case")
       const filRest = this.state.filteredRestaurants.map(r => r);
       let sortedFilteredRestaurants = filRest.sort((a, b) => {
           if (a.price < b.price) {
