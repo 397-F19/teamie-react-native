@@ -181,9 +181,7 @@ class App extends Component {
   }
 
   sortRestaurants(sortType) {
-    console.log("sort triggered")
     if (sortType == "price_low_to_high") {
-      console.log("entered the right case")
       const filRest = this.state.filteredRestaurants.map(r => r);
       let sortedFilteredRestaurants = filRest.sort((a, b) => {
           if (a.price < b.price) {
@@ -193,8 +191,48 @@ class App extends Component {
             return 1;
           }
           return 0;
-      })
+      });
       this.setState({filteredRestaurants: sortedFilteredRestaurants});
+    }
+    else if (sortType == "price_high_to_low") {
+      const filRest = this.state.filteredRestaurants.map(r => r);
+      let sortedFilteredRestaurants = filRest.sort((a, b) => {
+          if (a.price > b.price) {
+            return -1;
+          }
+          if (a.price < b.price) {
+            return 1;
+          }
+          return 0;
+      });
+      this.setState({filteredRestaurants: sortedFilteredRestaurants});
+    }
+    else if (sortType == "distance_ascending") {
+      const filRest = this.state.filteredRestaurants.map(r => r);
+      let sortedFilteredRestaurants = filRest.sort((a, b) => {
+          if (parseFloat(a.distance) < parseFloat(b.distance)) {
+            return -1;
+          }
+          else {
+            return 1;
+          }
+      });
+      this.setState({filteredRestaurants: sortedFilteredRestaurants});
+    }
+    else if (sortType == "distance_descending") {
+      const filRest = this.state.filteredRestaurants.map(r => r);
+      let sortedFilteredRestaurants = filRest.sort((a, b) => {
+          if (parseFloat(a.distance) > parseFloat(b.distance)) {
+            return -1;
+          }
+          else {
+            return 1;
+          }
+      });
+      this.setState({filteredRestaurants: sortedFilteredRestaurants});
+    }
+    else {
+      console.log("incorrect input to sortRestaurants");
     }
   }
 
