@@ -44,7 +44,7 @@ class App extends Component {
         "dinner": false,
       },
       selectedRestaurants: [],
-      location: ""
+      location: "",
     }
     this.handleData = this.handleData.bind(this);
     db.ref().on('value', this.handleData, e => console.log(e));
@@ -180,38 +180,22 @@ class App extends Component {
     this.setState({pollVisibility: true});
   }
 
-  sort(sortType) {
+  sortRestaurants(sortType) {
     console.log("sort triggered")
     if (sortType == "price_low_to_high") {
       console.log("entered the right case")
-        let sortedFilteredRestaurants = this.state.filteredRestaurants.sort((a, b) => {
-            if (a.price < b.price) {
-              return -1;
-            }
-            if (a.price > b.price) {
-              return 1
-            }
-            return 0;
-        })
-        console.log("sorted filtered restaurants: " + JSON.stringify(sortedFilteredRestaurants));
-        this.setState({filteredRestaurants: sortedFilteredRestaurants});
+      const filRest = this.state.filteredRestaurants.map(r => r);
+      let sortedFilteredRestaurants = filRest.sort((a, b) => {
+          if (a.price < b.price) {
+            return -1;
+          }
+          if (a.price > b.price) {
+            return 1;
+          }
+          return 0;
+      })
+      this.setState({filteredRestaurants: sortedFilteredRestaurants});
     }
-    // switch (sortType) {
-    //   case "price_low_to_high":
-    //     console.log("entered the right case")
-    //     let sortedFilteredRestaurants = this.state.filteredRestaurants.sort((a, b) => {
-    //         if (a.price < b.price) {
-    //           return -1;
-    //         }
-    //         if (a.price > b.price) {
-    //           return 1
-    //         }
-    //         return 0;
-    //     })
-    //     console.log("sorted filtered restaurants: " + JSON.stringify(sortedFilteredRestaurants));
-    //     this.setState({filteredRestaurants: sortedFilteredRestaurants})
-    //     break;
-    // }
   }
 
   render() {
@@ -222,15 +206,15 @@ class App extends Component {
         <Menu visible={this.state.sortVisibility}
             onDismiss={this._closeSortDialog}
             anchor={
-              <Appbar.Action icon="map-marker-distance" onPress={this._showSortDialog} />
+              <Appbar.Action style={styles.sortIcon} icon="sort" onPress={this._showSortDialog} />
             }>
-          <Menu.Item onPress={() => {this.sort("price_low_to_high")}} title="Price low to high" />
+          <Menu.Item onPress={() => {this.sortRestaurants("price_low_to_high")}} title="Price low to high" />
             <Divider />
-            <Menu.Item onPress={() => {this.sort("price_high_to_low")}} title="Price high to low" />
+            <Menu.Item onPress={() => {this.sortRestaurants("price_high_to_low")}} title="Price high to low" />
             <Divider />
-            <Menu.Item onPress={() => {this.sort("distance_ascending")}} title="Distance ascending" />
+            <Menu.Item onPress={() => {this.sortRestaurants("distance_ascending")}} title="Distance ascending" />
             <Divider />
-            <Menu.Item onPress={() => {this.sort("distance_descending")}} title="Distance descending" />
+            <Menu.Item onPress={() => {this.sortRestaurants("distance_descending")}} title="Distance descending" />
         </Menu>
       </Appbar>
       <View>
@@ -453,4 +437,7 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height,
   },
+  sortIcon: {
+    backgroundColor: 'white'
+  }
 });
