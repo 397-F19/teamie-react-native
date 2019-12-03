@@ -27,9 +27,14 @@ class RestaurantCard extends Component {
          </View>
         
         <View style={{width: '55%'}}>
+          
+        <Text style={styles.badge}>{this.props.restaurant.type}</Text>
+        
         <Text style={styles.headline}>{this.props.restaurant.name}</Text>
-                  <Paragraph style={styles.info}>{this.props.restaurant.type} ${this.props.restaurant.price}</Paragraph>
-                  <Paragraph style={styles.info}>{this.props.restaurant.distance} mi, {this.props.restaurant.time} min</Paragraph>
+        
+        <Text style={styles.info}>${this.props.restaurant.price}</Text>
+        <Text style={styles.info}>{this.props.restaurant.distance} mi, {this.props.restaurant.time} min</Text>
+        
                   </View>
         <View style={{width: '15%'}} >
         <FAB
@@ -80,45 +85,48 @@ const styles = StyleSheet.create({
       justifyContent: 'space-between',
       margin: 2,
       width: '95%',
-      // borderWidth: 1,
-      // borderStyle: "solid",
-      // borderColor: '#000', 
       backgroundColor: '#fafafa',
       borderRadius: 10,
       borderBottomWidth: 0,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.5,
+      shadowColor: '#6d6d6d',
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.3,
       shadowRadius: 4,
       marginTop: 20,
     },
     image: {
       margin: 0,
-      width: 100,
+      width: 80,
       height: 100,
       borderRadius: 10,
       shadowColor: '#fff',
     },
     headline: {
-      marginTop: 8,
-      marginLeft: 20,
+      marginTop: 4,
       fontSize: 20,
+      fontWeight: '500',
     },
-  
+    badge: {
+      //backgroundColor: '#4169E1',
+      fontSize: 12,
+      color: '#6200ea',
+      marginTop: 8,
+      //borderRadius: 4,
+    },
     info: {
-      marginLeft: 20,
+      //marginLeft: 20,
       fontSize: 10,
-      marginTop: 1,
+      marginTop: 4,
     },
   
     fab: {
       position: 'absolute',
       margin: 16,
-      right: 0,
-      bottom: 0,
     },
     imageWrapper: {
+      
       width: '30%',
-    }
+    },
+    
   });
 export default RestaurantCard;

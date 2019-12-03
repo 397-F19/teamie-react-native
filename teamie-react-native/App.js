@@ -244,7 +244,7 @@ class App extends Component {
         <Menu visible={this.state.sortVisibility}
             onDismiss={this._closeSortDialog}
             anchor={
-              <Appbar.Action style={styles.sortIcon} icon="sort" onPress={this._showSortDialog} />
+              <Appbar.Action icon="sort" color="#fff" onPress={this._showSortDialog} />
             }>
           <Menu.Item onPress={() => {this.sortRestaurants("price_low_to_high")}} title="Price low to high" />
             <Divider />
@@ -274,7 +274,15 @@ class App extends Component {
 
             <Dialog.Content>
                
-         
+            <Text style={styles.heading}>Filters</Text>
+            {/* Budget Filter */}
+            <Text style={styles.filterHeading}>Budget</Text>
+          <TextInput mode='outlined' style={styles.textBox} label='on Average' value={this.state.budget} onChangeText={(text) => {this.setState({budget: text}); }}/>
+
+          {/* Distance Filter */}
+          <Text style={styles.filterHeading}>Starting Location </Text>
+          <TextInput mode='outlined' style={styles.textBox} label='Address' value={this.state.location} onChangeText={(text) => {this.setState({location: text}); }}/>
+          
            {/* Vibe Filter */}
           <Text style={styles.filterHeading}>Vibe</Text>
           <Chip style={styles.chip} selected={this.state.vibe["good_for_clients"]} onPress={() => {
@@ -282,7 +290,7 @@ class App extends Component {
             updatedVibe["good_for_clients"] = !updatedVibe["good_for_clients"]; 
             this.setState({vibe: updatedVibe}); 
             this.updateFilteredRestaurants();  
-            }}>Good for clients</Chip>   
+            }}>Good for Clients</Chip>   
 
           <Chip style={styles.chip} selected={this.state.vibe["family_friendly"]} onPress={() => {
             let updatedVibe = this.state.vibe; 
@@ -324,14 +332,7 @@ class App extends Component {
             this.setState({selectedTime: updatedTime}); 
             this.updateFilteredRestaurants();}}>Dinner 17:30 - 19:30</Chip>
            
-           {/* Budget Filter */}
-          <Text style={styles.filterHeading}>Budget</Text>
-          <TextInput icon="currency-usd" label='budget' value={this.state.budget} onChangeText={(text) => {this.setState({budget: text}); }}/>
-
-          {/* Distance Filter */}
-          <Text style={styles.filterHeading}>Starting Location</Text>
-          <TextInput label='address' value={this.state.location} onChangeText={(text) => {this.setState({location: text}); }}/>
-          
+           
             </Dialog.Content>
             <Dialog.Actions>
               <Button onPress={() => {this._hideDialog(); this.updateFilteredRestaurants();}}>Done</Button>
@@ -343,7 +344,7 @@ class App extends Component {
         <Portal>
           <Dialog visible={this.state.pollVisibility} onDismiss={this._hideDialog}>
             <Dialog.Content>
-              <Text>Your poll has been generated!</Text>
+              <Text style={styles.heading}>Your poll has been generated!</Text>
               <Text style={styles.filterHeading}>Link to poll: 
                 <Text style={styles.pollLink} onPress={() => Linking.openURL('https://teamie-blue.firebaseapp.com/voting/1,5,7')}> https://teamie-blue.firebaseapp.com/voting/1,5,7</Text>
               </Text>
@@ -393,50 +394,6 @@ AppRegistry.registerComponent('main', () => Main);
 
 
 const styles = StyleSheet.create({
-  list: {
-    width: 100,
-
-  },
-
-  surface: {
-    padding: 8,
-    height: 80,
-    width: 80,
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 4,
-  },
-
-  restaurantCard: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    margin: 2,
-    borderWidth: 1,
-    borderRadius: 4, 
-    borderStyle: "solid",
-    borderColor: '#000', 
-  },
-  image: {
-    margin: 0,
-    width: 100,
-    height: 100,
-  },
-  headline: {
-    marginTop: 20,
-    marginLeft: 20,
-    fontSize: 20,
-  },
-
-
-
-  fab: {
-    position: 'absolute',
-    margin: 16,
-    right: 0,
-    bottom: 0,
-    backgroundColor: '#8a2be2', 
-  },
   bottom: {
     position: 'relative',
     left: 0,
@@ -444,35 +401,47 @@ const styles = StyleSheet.create({
     bottom: 0,
     height: 100,
   },
-  chip:{
-    
-    marginTop: 1, 
-  
-  },
-  cart:{
-    backgroundColor: '#8a2be2', 
-    color: '#fff',
-    fontSize: 16,
-    padding: 6,
-  },
-  poll:{
-    borderBottomColor: '#fff',
+  heading: {
+    marginTop: 20,
+    fontSize: 20,
+    fontWeight: '500',
+    textAlign: "center",
   },
   filterHeading: {
-    paddingTop: 20
+    textAlign: "center",
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#6200ea',
+    marginBottom: 10,
+    marginTop: 10,
+  },
+  chip:{
+    margin: 1, 
+    backgroundColor: '#ede7f6',
+    borderStyle: "solid",
+    borderColor: '#757575',
+    borderWidth: 1,
+  },
+  textBox:{
+    marginTop: 4,
+    backgroundColor: '#ede7f6',
+  },
+  cart:{
+    backgroundColor: '#651fff', 
+    color: '#fff',
+    fontSize: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    margin: 4,
+  },
+  poll:{
+    backgroundColor: '#ede7f6',
   },
   restaurantList: {
     marginLeft: 10,
   },
   pollLink: {
     textDecorationLine: 'underline',
-    color: 'blue'
-  },
-  mapStyle: {
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height,
-  },
-  sortIcon: {
-    color: '#fff'
+    color: 'blue',
   }
 });
